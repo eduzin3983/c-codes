@@ -36,3 +36,5 @@ dist/
 ex*
 # Allow .c files
 !ex*.c
+!Exercises/
+!Exercises/**/*.c
