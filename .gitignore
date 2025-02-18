@@ -31,3 +31,6 @@ dist/
 
 # Ignore Visual Studio Code
 .vscode/
+
+# Ignore specific files without extensions
+*ex
