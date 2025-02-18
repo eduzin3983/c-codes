@@ -32,9 +32,14 @@ dist/
 # Ignore Visual Studio Code
 .vscode/
 
-# Ignore all files
+# Ignore all files starting with 'ex'
 ex*
-# Allow .c files
+
+# Allow .c files starting with 'ex'
 !ex*.c
+
+# Allow Exercises directory
 !Exercises/
+
+# Allow all .c files in Exercises directory and subdirectories
 !Exercises/**/*.c
