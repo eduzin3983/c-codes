@@ -28,6 +28,7 @@
 # Ignore directories
 build/
 dist/
+output/
 
 # Ignore Visual Studio Code
 .vscode/
