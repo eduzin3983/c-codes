@@ -49,9 +49,6 @@ Após a compilação, execute:
 Caso tenha dúvidas ou sugestões, sinta-se à vontade para entrar em contato.
 
 ---
----
----
----
 
 # Projeto de Simulação de Caixa Eletrônico
 
