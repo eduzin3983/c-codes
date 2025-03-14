@@ -1,83 +1,73 @@
-// Este código não está 100% finalizado, possui alguns bugs, mas dá uma boa ideia da funcionalidade do sistema.
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-//#include<windows.h> For Windows
-#include<unistd.h> //For Linux
 #include <time.h>
 
-// Função para definir a quantidade de cédulas
-void calculoQuantidadeNotas(float _troco, int *notas200, int *notas100, int *notas50, int *notas10, int *notas5, int *moedas1, int *moedas05) {
-    int valoresCedulas[] = {200, 100, 50, 10, 5};
-    int quantidadeCedulas[] = {0, 0, 0, 0, 0};
-    float valoresMoedas[] = {1.0, 0.5};
-    int quantidadeMoedas[] = {0, 0};
-
-    for (int i = 0; i < 5; i++) {
-        while ((*notas200 > 0 || *notas100 > 0 || *notas50 > 0 || *notas10 > 0 || *notas5 > 0) && (_troco >= valoresCedulas[i])) {
-            _troco -= valoresCedulas[i];
-            switch (i) {
-                case 0:
-                    (*notas200)--;
-                    quantidadeCedulas[0]++;
-                    break;
-                case 1:
-                    (*notas100)--;
-                    quantidadeCedulas[1]++;
-                    break;
-                case 2:
-                    (*notas50)--;
-                    quantidadeCedulas[2]++;
-                    break;
-                case 3:
-                    (*notas10)--;
-                    quantidadeCedulas[3]++;
-                    break;
-                case 4:
-                    (*notas5)--;
-                    quantidadeCedulas[4]++;
-                    break;
-            }
-        }
+// FunÃ§Ã£o para definir a quantidade de cÃ©dulas/moedas para o troco
+void calculoQuantidadeNotas(float troco, int *notas200, int *notas100, int *notas50, int *notas10, int *notas5, int *moedas1, int *moedas05) {
+    int count200 = 0, count100 = 0, count50 = 0, count10 = 0, count5 = 0;
+    int count1 = 0, count05 = 0;
+    
+    // Verifica para cada valor se hÃ¡ troco suficiente e se hÃ¡ cÃ©dulas/moedas disponÃ­veis
+    while (troco >= 200 && *notas200 > 0) {
+        troco -= 200;
+        (*notas200)--;
+        count200++;
     }
-
-    for (int i = 0; i < 2; i++) {
-        while ((*moedas1 > 0 || *moedas05 > 0) && (_troco >= valoresMoedas[i])) {
-            _troco -= valoresMoedas[i];
-            switch (i) {
-                case 0:
-                    (*moedas1)--;
-                    quantidadeMoedas[0]++;
-                    break;
-                case 1:
-                    (*moedas05)--;
-                    quantidadeMoedas[1]++;
-                    break;
-            }
-        }
+    while (troco >= 100 && *notas100 > 0) {
+        troco -= 100;
+        (*notas100)--;
+        count100++;
     }
-
-    // Impressão da quantidade de cada cédula/moeda
-    for (int i = 0; i < 5; i++) {
-        if (quantidadeCedulas[i] > 0) {
-            printf("%d cedula(s) de R$%d\n", quantidadeCedulas[i], valoresCedulas[i]);
-        }
+    while (troco >= 50 && *notas50 > 0) {
+        troco -= 50;
+        (*notas50)--;
+        count50++;
     }
-
-    for (int i = 0; i < 2; i++) {
-        if (quantidadeMoedas[i] > 0) {
-            printf("%d moeda(s) de R$%.1f\n", quantidadeMoedas[i], valoresMoedas[i]);
-        }
+    while (troco >= 10 && *notas10 > 0) {
+        troco -= 10;
+        (*notas10)--;
+        count10++;
     }
+    while (troco >= 5 && *notas5 > 0) {
+        troco -= 5;
+        (*notas5)--;
+        count5++;
+    }
+    while (troco >= 1.0 && *moedas1 > 0) {
+        troco -= 1.0;
+        (*moedas1)--;
+        count1++;
+    }
+    while (troco >= 0.5 && *moedas05 > 0) {
+        troco -= 0.5;
+        (*moedas05)--;
+        count05++;
+    }
+    
+    // ImpressÃ£o da quantidade de cada cÃ©dula/moeda utilizada para o troco
+    if (count200 > 0)
+        printf("%d cedula(s) de R$200\n", count200);
+    if (count100 > 0)
+        printf("%d cedula(s) de R$100\n", count100);
+    if (count50 > 0)
+        printf("%d cedula(s) de R$50\n", count50);
+    if (count10 > 0)
+        printf("%d cedula(s) de R$10\n", count10);
+    if (count5 > 0)
+        printf("%d cedula(s) de R$5\n", count5);
+    if (count1 > 0)
+        printf("%d moeda(s) de R$1.00\n", count1);
+    if (count05 > 0)
+        printf("%d moeda(s) de R$0.50\n", count05);
 }
 
-// Função para fechar o caixa
+// FunÃ§Ã£o para fechar o caixa
 void fecharCaixaFuncao(int clientes, float totalVendas, float valorExistente,
-                       int notas200, int notas100, int notas50, int notas10, int notas5,
-                       int moedas1, int moedas05) {
+                         int notas200, int notas100, int notas50, int notas10, int notas5,
+                         int moedas1, int moedas05) {
 
-    system("cls");
+    system("clear");
     printf("========================================\n\n");
     printf("Fechamento do Caixa!!\n");
     printf("Numero de clientes atendidos: %d\n", clientes);
@@ -95,65 +85,58 @@ void fecharCaixaFuncao(int clientes, float totalVendas, float valorExistente,
     printf("%d moeda(s) de R$1.00\n", moedas1);
     printf("%d moeda(s) de R$0.50\n", moedas05);
 
-    printf("\n========================================");
+    printf("\n========================================\n");
     sleep(5);
 }
 
-// Função principal
+// FunÃ§Ã£o principal
 int main() {
-
-	//Variaveis
+    // VariÃ¡veis de configuraÃ§Ã£o e estado
     int senha = 1234;
     int tentativas = 3;
     int senhaInserida;
 
-    float dinheiroCaixa = 1280.0;
+    float dinheiroCaixa = 1280.0; // Valor inicial do caixa
     int notas200 = 2, notas100 = 4, notas50 = 6, notas10 = 10, notas5 = 10;
     int moedas1 = 20, moedas05 = 20;
 
-	int numeroVendas = 0;
-	float dinheiroCaixaTotal = 0.0;
-    float valorTotalVendas = 0.0;
-    float valorTodasVendas =0.0;
+    int numeroVendas;
+    float valorTotalVendas = 0.0; // Valor da venda atual
+    float totalVendasAcumulado = 0.0; // Acumulador do valor de todas as vendas
+    float valorPago, troco;
 
     int fecharCaixa = 0;
-    int clientes = 1;
+    int clientes = 0;  // Contador de clientes atendidos
+
+    // Solicita a senha apenas no inÃ­cio da sessÃ£o
+    system("clear");
+    while (tentativas > 0) {
+        printf("Insira a senha para abrir o caixa: ");
+        scanf("%d", &senhaInserida);
+
+        if (senhaInserida == senha) {
+            system("clear");
+            printf("\nCaixa aberto com sucesso!\n\n");
+            break;
+        } else {
+            tentativas--;
+            printf("\nSenha incorreta! Tente novamente. Voce tem mais %d tentativas!\n\n", tentativas);
+        }
+    }
+    if (tentativas == 0) {
+        system("clear");
+        printf("Numero maximo de tentativas excedido. Reinicie o sistema.\n");
+        return 0;
+    }
 
     // Loop principal do caixa
-    while (fecharCaixa == 0) {
-
-        valorTotalVendas = 0;
-
-    	system("cls");
-        printf("Bem-vindo(a) ao caixa do supermercado!\n");
-
-        // Sistema de senha
-        while (tentativas > 0) {
-            printf("Insira a senha para abrir o caixa: ");
-            scanf("%d", &senhaInserida);
-
-            if (senhaInserida == senha) {
-            	system("cls");
-                printf("\nCaixa aberto com sucesso!\n\n");
-                break;
-            } else {
-                tentativas--;
-                printf("\nSenha incorreta! Tente novamente. Voce tem mais %d tentativas!\n\n", tentativas);
-            }
-        }
-
-        if (tentativas == 0) {
-        	system("cls");
-            printf("Numero maximo de tentativas excedido. Reinicie o sistema.\n");
-            return 0;
-        }
-
-        // Sistema de inserção de itens
+    while (!fecharCaixa) {
+        valorTotalVendas = 0.0;
         numeroVendas = 0;
 
+        // Entrada dos itens da venda
         while (1) {
             float valorItem;
-
             printf("Insira o valor do item (%d) (ou zero para finalizar a venda): ", numeroVendas + 1);
             scanf("%f", &valorItem);
 
@@ -161,158 +144,90 @@ int main() {
                 char opcao;
                 printf("Fechar a lista de itens? (S/N): ");
                 scanf(" %c", &opcao);
-
                 if (opcao == 'S' || opcao == 's') {
-                	system("cls");
-                    printf("Lista Finalizada %d Itens.\n", numeroVendas);
-                    printf("Aguarde um segundo.....\n");
-                    sleep(2);
+                    system("clear");
+                    printf("Lista finalizada com %d item(ns).\n", numeroVendas);
+                    sleep(1);
                     break;
                 } else if (opcao == 'N' || opcao == 'n') {
                     continue;
                 }
             }
-
             if (valorItem == -1) {
-                printf("Valor desconsiderado. Digite o valor correto do Item (%d): ", numeroVendas + 1);
+                printf("Valor desconsiderado. Digite o valor correto do item (%d): ", numeroVendas + 1);
                 scanf("%f", &valorItem);
-
                 if (valorItem == -1) {
-                    printf("Valor ainda invalido. Item desconsiderado.\n");
+                    printf("Valor ainda invÃ¡lido. Item desconsiderado.\n");
                     continue;
                 }
             }
-
             if (valorItem < 0.0 && valorItem != -1) {
                 printf("Valor incorreto. Item desconsiderado.\n");
                 continue;
             }
-
             valorTotalVendas += valorItem;
             numeroVendas++;
         }
 
-        valorTodasVendas = valorTotalVendas;
-
-        // Sistema de Troco
-        float valorPago;
-        float troco;
-
-        system("cls");
+        // Mostra o total da venda atual
+        system("clear");
         printf("====================================\n");
         printf("\nVenda Finalizada!!\n");
         printf("Total da venda: R$%.2f\n", valorTotalVendas);
         printf("\n====================================\n\n");
 
+        // Processa o pagamento
         printf("Insira o valor pago pelo cliente: ");
         scanf("%f", &valorPago);
 
-        //calculo do troco
-        troco = valorPago - valorTotalVendas;
-
-        //calculo do dinheiro total no caixa
-        dinheiroCaixaTotal = dinheiroCaixa - troco;
-
-        if (troco > dinheiroCaixaTotal) {
-                printf("Troco Indisponivel");
-                return 0;
-            }
-
-        if (valorPago == valorTotalVendas) {
-            printf("Nao ha troco!\n\n");
-
-			char opcao;
-            printf("Deseja fechar o caixa? (S/N): ");
-            scanf(" %c", &opcao);
-
-            if (opcao == 'S' || opcao == 's') {
-                fecharCaixa = 1;
-                fecharCaixaFuncao(clientes, valorTodasVendas, dinheiroCaixaTotal, notas200, notas100, notas50, notas10, notas5, moedas1, moedas05);
-            } else if (opcao == 'N' || opcao == 'n') {
-                clientes++;
-                continue;
-            }
-        } else if (valorPago > valorTotalVendas) {
-            dinheiroCaixaTotal -= troco;
-            printf("Troco a ser devolvido: R$%.2f\n\n", troco);
-
-            calculoQuantidadeNotas(troco, &notas200, &notas100, &notas50, &notas10, &notas5, &moedas1, &moedas05);
-
-            char opcao;
-            printf("\nDeseja fechar o caixa? (S/N): ");
-            scanf(" %c", &opcao);
-
-            if (opcao == 'S' || opcao == 's') {
-                fecharCaixa = 1;
-                fecharCaixaFuncao(clientes, valorTodasVendas, dinheiroCaixaTotal, notas200, notas100, notas50, notas10, notas5, moedas1, moedas05);
-            } else if (opcao == 'N' || opcao == 'n') {
-                clientes++;
-                continue;
-            }
-        }
-
+        // Se o valor pago for insuficiente, permite cancelar ou tentar novamente
         while (valorPago < valorTotalVendas) {
             char opcao;
             printf("\nValor pago insuficiente. Deseja cancelar a compra? (S/N): ");
             scanf(" %c", &opcao);
-
             if (opcao == 'S' || opcao == 's') {
-                system("cls");
-				printf("Compra cancelada desligando o sistema....");
-				sleep(2);
+                system("clear");
+                printf("Compra cancelada. Encerrando o sistema...\n");
+                sleep(2);
                 return 0;
             } else if (opcao == 'N' || opcao == 'n') {
                 printf("\nInforme o valor novamente: ");
                 scanf("%f", &valorPago);
-
-                if (valorPago < valorTotalVendas) {
-                    system("cls");
-					printf("Compra cancelada desligando o sistema....");
-					sleep(2);
-                    return 0;
-                } else {
-                    if (valorPago == valorTotalVendas)
-					{
-                        printf("Nao ha troco!\n\n");
-
-                        char opcao;
-			            printf("Deseja fechar o caixa? (S/N): ");
-			            scanf(" %c", &opcao);
-
-			            if (opcao == 'S' || opcao == 's') {
-			                fecharCaixa = 1;
-			                fecharCaixaFuncao(clientes, valorTodasVendas, dinheiroCaixaTotal, notas200, notas100, notas50, notas10, notas5, moedas1, moedas05);
-			            } else if (opcao == 'N' || opcao == 'n') {
-			                clientes++;
-			                continue;
-			            }
-                    }
-					else if (valorPago > valorTotalVendas) {
-                        dinheiroCaixaTotal -= troco;
-                        printf("Troco a ser devolvido: R$%.2f\n\n", troco);
-
-                        calculoQuantidadeNotas(troco, &notas200, &notas100, &notas50, &notas10, &notas5, &moedas1, &moedas05);
-
-						char opcao;
-			            printf("\nDeseja fechar o caixa? (S/N): ");
-			            scanf(" %c", &opcao);
-
-			            if (opcao == 'S' || opcao == 's') {
-			                fecharCaixa = 1;
-			                fecharCaixaFuncao(clientes, valorTodasVendas, dinheiroCaixaTotal, notas200, notas100, notas50, notas10, notas5, moedas1, moedas05);
-			            } else if (opcao == 'N' || opcao == 'n') {
-			                clientes++;
-			                continue;
-			            }
-
-                        if (troco > dinheiroCaixaTotal) {
-                            printf("Troco Indisponível");
-                            return 0;
-                        }
-                    }
-                }
             }
         }
+
+        // Atualiza o caixa e o acumulado de vendas
+        dinheiroCaixa += valorTotalVendas;
+        totalVendasAcumulado += valorTotalVendas;
+        clientes++;
+
+        // Se houver troco (valor pago maior que total da venda)
+        if (valorPago > valorTotalVendas) {
+            troco = valorPago - valorTotalVendas;
+            // Verifica se hÃ¡ dinheiro suficiente para dar o troco
+            if (troco > dinheiroCaixa) {
+                printf("Troco indisponivel. OperaÃ§Ã£o cancelada.\n");
+                return 0;
+            }
+            // Atualiza o caixa: retira o valor do troco dado
+            dinheiroCaixa -= troco;
+            printf("Troco a ser devolvido: R$%.2f\n\n", troco);
+            calculoQuantidadeNotas(troco, &notas200, &notas100, &notas50, &notas10, &notas5, &moedas1, &moedas05);
+        } else {
+            printf("Pagamento exato. Nao ha troco!\n\n");
+        }
+
+        // Pergunta se deseja fechar o caixa
+        char opcao;
+        printf("\nDeseja fechar o caixa? (S/N): ");
+        scanf(" %c", &opcao);
+        if (opcao == 'S' || opcao == 's') {
+            fecharCaixa = 1;
+            fecharCaixaFuncao(clientes, totalVendasAcumulado, dinheiroCaixa,
+                              notas200, notas100, notas50, notas10, notas5,
+                              moedas1, moedas05);
+        }
+        
     }
 
     return 0;

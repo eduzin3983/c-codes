@@ -1,321 +1,231 @@
-// This version translated into English may have some bugs, the tested and ideal test version is in Portuguese
-// This code is not 100% finished, it has some bugs, but it gives a good idea of ​​the functionality of the system.
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-//#include<windows.h> For Windows
-#include <unistd.h> //For Linux
 #include <time.h>
 
-// Function to calculate the quantity of notes
-void calculateNoteQuantity(float _change, int *notes200, int *notes100, int *notes50, int *notes10, int *notes5, int *coins1, int *coins05) {
-    int notesValues[] = {200, 100, 50, 10, 5};
-    int notesQuantity[] = {0, 0, 0, 0, 0};
-    float coinsValues[] = {1.0, 0.5};
-    int coinsQuantity[] = {0, 0};
-
-    for (int i = 0; i < 5; i++) {
-        while ((*notes200 > 0 || *notes100 > 0 || *notes50 > 0 || *notes10 > 0 || *notes5 > 0) && (_change >= notesValues[i])) {
-            _change -= notesValues[i];
-            switch (i) {
-                case 0:
-                    (*notes200)--;
-                    notesQuantity[0]++;
-                    break;
-                case 1:
-                    (*notes100)--;
-                    notesQuantity[1]++;
-                    break;
-                case 2:
-                    (*notes50)--;
-                    notesQuantity[2]++;
-                    break;
-                case 3:
-                    (*notes10)--;
-                    notesQuantity[3]++;
-                    break;
-                case 4:
-                    (*notes5)--;
-                    notesQuantity[4]++;
-                    break;
-            }
-        }
+// Function to calculate the number of bills/coins for the change
+void calculateChange(float change, int *bill200, int *bill100, int *bill50, int *bill10, int *bill5, int *coin1, int *coin05) {
+    int billCount200 = 0, billCount100 = 0, billCount50 = 0, billCount10 = 0, billCount5 = 0;
+    int coinCount1 = 0, coinCount05 = 0;
+    
+    // Check for each denomination if there is enough change and if bills/coins are available
+    while (change >= 200 && *bill200 > 0) {
+        change -= 200;
+        (*bill200)--;
+        billCount200++;
     }
-
-    for (int i = 0; i < 2; i++) {
-        while ((*coins1 > 0 || *coins05 > 0) && (_change >= coinsValues[i])) {
-            _change -= coinsValues[i];
-            switch (i) {
-                case 0:
-                    (*coins1)--;
-                    coinsQuantity[0]++;
-                    break;
-                case 1:
-                    (*coins05)--;
-                    coinsQuantity[1]++;
-                    break;
-            }
-        }
+    while (change >= 100 && *bill100 > 0) {
+        change -= 100;
+        (*bill100)--;
+        billCount100++;
     }
-
-    // Printing the quantity of each note/coin
-    for (int i = 0; i < 5; i++) {
-        if (notesQuantity[i] > 0) {
-            printf("%d note(s) of R$%d\n", notesQuantity[i], notesValues[i]);
-        }
+    while (change >= 50 && *bill50 > 0) {
+        change -= 50;
+        (*bill50)--;
+        billCount50++;
     }
-
-    for (int i = 0; i < 2; i++) {
-        if (coinsQuantity[i] > 0) {
-            printf("%d coin(s) of R$%.1f\n", coinsQuantity[i], coinsValues[i]);
-        }
+    while (change >= 10 && *bill10 > 0) {
+        change -= 10;
+        (*bill10)--;
+        billCount10++;
     }
+    while (change >= 5 && *bill5 > 0) {
+        change -= 5;
+        (*bill5)--;
+        billCount5++;
+    }
+    while (change >= 1.0 && *coin1 > 0) {
+        change -= 1.0;
+        (*coin1)--;
+        coinCount1++;
+    }
+    while (change >= 0.5 && *coin05 > 0) {
+        change -= 0.5;
+        (*coin05)--;
+        coinCount05++;
+    }
+    
+    // Print the quantity of each bill/coin used for the change
+    if (billCount200 > 0)
+        printf("%d bill(s) of $200\n", billCount200);
+    if (billCount100 > 0)
+        printf("%d bill(s) of $100\n", billCount100);
+    if (billCount50 > 0)
+        printf("%d bill(s) of $50\n", billCount50);
+    if (billCount10 > 0)
+        printf("%d bill(s) of $10\n", billCount10);
+    if (billCount5 > 0)
+        printf("%d bill(s) of $5\n", billCount5);
+    if (coinCount1 > 0)
+        printf("%d coin(s) of $1.00\n", coinCount1);
+    if (coinCount05 > 0)
+        printf("%d coin(s) of $0.50\n", coinCount05);
 }
 
 // Function to close the cash register
-void closeCashRegisterFunction(int customers, float totalSales, float existingValue,
-                               int notes200, int notes100, int notes50, int notes10, int notes5,
-                               int coins1, int coins05) {
+void closeCashRegister(int customers, float totalSales, float currentCash,
+                         int bill200, int bill100, int bill50, int bill10, int bill5,
+                         int coin1, int coin05) {
 
-    system("cls");
+    system("clear");
     printf("========================================\n\n");
-    printf("Cash Register Closure!!\n");
+    printf("Cash Register Closing!!\n");
     printf("Number of customers served: %d\n", customers);
-    printf("Total sales value: R$%.2f\n", totalSales);
-    printf("Existing value in the cash register: R$%.2f\n", existingValue);
+    printf("Total sales amount: $%.2f\n", totalSales);
+    printf("Cash register balance: $%.2f\n", currentCash);
 
-    printf("\nQuantity of remaining notes in the cash register:\n");
-    printf("%d note(s) of R$200\n", notes200);
-    printf("%d note(s) of R$100\n", notes100);
-    printf("%d note(s) of R$50\n", notes50);
-    printf("%d note(s) of R$10\n", notes10);
-    printf("%d note(s) of R$5\n", notes5);
+    printf("\nRemaining bills in the register:\n");
+    printf("%d bill(s) of $200\n", bill200);
+    printf("%d bill(s) of $100\n", bill100);
+    printf("%d bill(s) of $50\n", bill50);
+    printf("%d bill(s) of $10\n", bill10);
+    printf("%d bill(s) of $5\n", bill5);
 
-    printf("\nQuantity of remaining coins in the cash register:\n");
-    printf("%d coin(s) of R$1.00\n", coins1);
-    printf("%d coin(s) of R$0.50\n", coins05);
+    printf("\nRemaining coins in the register:\n");
+    printf("%d coin(s) of $1.00\n", coin1);
+    printf("%d coin(s) of $0.50\n", coin05);
 
-    printf("\n========================================");
+    printf("\n========================================\n");
     sleep(5);
 }
 
 // Main function
 int main() {
-
-    // Variables
+    // Configuration and state variables
     int password = 1234;
     int attempts = 3;
     int enteredPassword;
 
-    float cashInRegister = 1280.0;
-    int notes200 = 2, notes100 = 4, notes50 = 6, notes10 = 10, notes5 = 10;
-    int coins1 = 20, coins05 = 20;
+    float cashRegister = 1280.0; // Initial cash register balance
+    int bill200 = 2, bill100 = 4, bill50 = 6, bill10 = 10, bill5 = 10;
+    int coin1 = 20, coin05 = 20;
 
-    int salesNumber = 0;
-    float totalCashInRegister = 0.0;
-    float totalSalesValue = 0.0;
-    float allSalesValue = 0.0;
+    int saleCount;
+    float currentSaleTotal = 0.0;       // Total of the current sale
+    float totalSalesAccumulated = 0.0;    // Accumulated total of all sales
+    float amountPaid, change;
 
     int closeRegister = 0;
-    int customers = 1;
+    int customers = 0;  // Counter for customers served
+
+    // Request password only at the start of the session
+    system("clear");
+    while (attempts > 0) {
+        printf("Enter the password to open the register: ");
+        scanf("%d", &enteredPassword);
+
+        if (enteredPassword == password) {
+            system("clear");
+            printf("\nRegister opened successfully!\n\n");
+            break;
+        } else {
+            attempts--;
+            printf("\nIncorrect password! Try again. You have %d attempt(s) remaining!\n\n", attempts);
+        }
+    }
+    if (attempts == 0) {
+        system("clear");
+        printf("Maximum number of attempts exceeded. Restart the system.\n");
+        return 0;
+    }
 
     // Main loop of the cash register
-    while (closeRegister == 0) {
+    while (!closeRegister) {
+        currentSaleTotal = 0.0;
+        saleCount = 0;
 
-        totalSalesValue = 0;
-
-        system("cls");
-        printf("Welcome to the supermarket cash register!\n");
-
-        // Password system
-        while (attempts > 0) {
-            printf("Enter the password to open the cash register: ");
-            scanf("%d", &enteredPassword);
-
-            if (enteredPassword == password) {
-                system("cls");
-                printf("\nCash register opened successfully!\n\n");
-                break;
-            } else {
-                attempts--;
-                printf("\nIncorrect password! Try again. You have %d attempts left!\n\n", attempts);
-            }
-        }
-
-        if (attempts == 0) {
-            system("cls");
-            printf("Maximum number of attempts exceeded. Restart the system.\n");
-            return 0;
-        }
-
-        // Item insertion system
-        salesNumber = 0;
-
+        // Input the sale items
         while (1) {
-            float itemValue;
+            float itemPrice;
+            printf("Enter the price of item (%d) (or zero to finish the sale): ", saleCount + 1);
+            scanf("%f", &itemPrice);
 
-            printf("Enter the value of item (%d) (or zero to finish the sale): ", salesNumber + 1);
-            scanf("%f", &itemValue);
-
-            if (itemValue == 0.0) {
+            if (itemPrice == 0.0) {
                 char option;
-                printf("Close the list of items? (Y/N): ");
+                printf("Close the item list? (Y/N): ");
                 scanf(" %c", &option);
-
                 if (option == 'Y' || option == 'y') {
-                    system("cls");
-                    printf("List Finished %d Items.\n", salesNumber);
-                    printf("Please wait a moment.....\n");
-                    sleep(2);
+                    system("clear");
+                    printf("List finalized with %d item(s).\n", saleCount);
+                    sleep(1);
                     break;
                 } else if (option == 'N' || option == 'n') {
                     continue;
                 }
             }
-
-            if (itemValue == -1) {
-                printf("Value disregarded. Enter the correct value of Item (%d): ", salesNumber + 1);
-                scanf("%f", &itemValue);
-
-                if (itemValue == -1) {
-                    printf("Still an invalid value. Item disregarded.\n");
+            if (itemPrice == -1) {
+                printf("Value disregarded. Enter the correct price for item (%d): ", saleCount + 1);
+                scanf("%f", &itemPrice);
+                if (itemPrice == -1) {
+                    printf("Value still invalid. Item disregarded.\n");
                     continue;
                 }
             }
-
-            if (itemValue < 0.0 && itemValue != -1) {
+            if (itemPrice < 0.0 && itemPrice != -1) {
                 printf("Incorrect value. Item disregarded.\n");
                 continue;
             }
-
-            totalSalesValue += itemValue;
-            salesNumber++;
+            currentSaleTotal += itemPrice;
+            saleCount++;
         }
 
-        allSalesValue = totalSalesValue;
-
-        // Change system
-        float paidValue;
-        float change;
-
-        system("cls");
+        // Display the total of the current sale
+        system("clear");
         printf("====================================\n");
         printf("\nSale Completed!!\n");
-        printf("Total sale value: R$%.2f\n", totalSalesValue);
+        printf("Sale total: $%.2f\n", currentSaleTotal);
         printf("\n====================================\n\n");
 
-        printf("Enter the value paid by the customer: ");
-        scanf("%f", &paidValue);
+        // Process the payment
+        printf("Enter the amount paid by the customer: ");
+        scanf("%f", &amountPaid);
 
-        // Calculation of change
-        change = paidValue - totalSalesValue;
-
-        // Calculation of total money in the register
-        totalCashInRegister = cashInRegister - change;
-
-        if (change > totalCashInRegister) {
-            printf("Unavailable Change");
-            return 0;
-        }
-
-        if (paidValue == totalSalesValue) {
-            printf("No change needed!\n\n");
-
+        // If the amount paid is insufficient, allow canceling or re-entering the amount
+        while (amountPaid < currentSaleTotal) {
             char option;
-            printf("Do you want to close the register? (Y/N): ");
+            printf("\nAmount paid is insufficient. Do you want to cancel the purchase? (Y/N): ");
             scanf(" %c", &option);
-
             if (option == 'Y' || option == 'y') {
-                closeRegister = 1;
-                closeCashRegisterFunction(customers, allSalesValue, totalCashInRegister, notes200, notes100, notes50, notes10, notes5, coins1, coins05);
-            } else if (option == 'N' || option == 'n') {
-                customers++;
-                continue;
-            }
-        } else if (paidValue > totalSalesValue) {
-            totalCashInRegister -= change;
-            printf("Change to be returned: R$%.2f\n\n", change);
-
-            calculateNoteQuantity(change, &notes200, &notes100, &notes50, &notes10, &notes5, &coins1, &coins05);
-
-            char option;
-            printf("\nDo you want to close the register? (Y/N): ");
-            scanf(" %c", &option);
-
-            if (option == 'Y' || option == 'y') {
-                closeRegister = 1;
-                closeCashRegisterFunction(customers, allSalesValue, totalCashInRegister, notes200, notes100, notes50, notes10, notes5, coins1, coins05);
-            } else if (option == 'N' || option == 'n') {
-                customers++;
-                continue;
-            }
-
-            if (change > totalCashInRegister) {
-                printf("Unavailable Change");
-                return 0;
-            }
-        }
-
-        while (paidValue < totalSalesValue) {
-            char option;
-            printf("\nInsufficient paid value. Do you want to cancel the purchase? (Y/N): ");
-            scanf(" %c", &option);
-
-            if (option == 'Y' || option == 'y') {
-                system("cls");
-                printf("Purchase canceled. Turning off the system....");
+                system("clear");
+                printf("Purchase canceled. Closing the system...\n");
                 sleep(2);
                 return 0;
             } else if (option == 'N' || option == 'n') {
-                printf("\nEnter the value again: ");
-                scanf("%f", &paidValue);
-
-                if (paidValue < totalSalesValue) {
-                    system("cls");
-                    printf("Purchase canceled. Turning off the system....");
-                    sleep(2);
-                    return 0;
-                } else {
-                    if (paidValue == totalSalesValue) {
-                        printf("No change needed!\n\n");
-
-                        char option;
-                        printf("Do you want to close the register? (Y/N): ");
-                        scanf(" %c", &option);
-
-                        if (option == 'Y' || option == 'y') {
-                            closeRegister = 1;
-                            closeCashRegisterFunction(customers, allSalesValue, totalCashInRegister, notes200, notes100, notes50, notes10, notes5, coins1, coins05);
-                        } else if (option == 'N' || option == 'n') {
-                            customers++;
-                            continue;
-                        }
-                    } else if (paidValue > totalSalesValue) {
-                        totalCashInRegister -= change;
-                        printf("Change to be returned: R$%.2f\n\n", change);
-
-                        calculateNoteQuantity(change, &notes200, &notes100, &notes50, &notes10, &notes5, &coins1, &coins05);
-
-                        char option;
-                        printf("\nDo you want to close the register? (Y/N): ");
-                        scanf(" %c", &option);
-
-                        if (option == 'Y' || option == 'y') {
-                            closeRegister = 1;
-                            closeCashRegisterFunction(customers, allSalesValue, totalCashInRegister, notes200, notes100, notes50, notes10, notes5, coins1, coins05);
-                        } else if (option == 'N' || option == 'n') {
-                            customers++;
-                            continue;
-                        }
-
-                        if (change > totalCashInRegister) {
-                            printf("Unavailable Change");
-                            return 0;
-                        }
-                    }
-                }
+                printf("\nEnter the amount again: ");
+                scanf("%f", &amountPaid);
             }
+        }
+
+        // Update the cash register and accumulated sales
+        cashRegister += currentSaleTotal;
+        totalSalesAccumulated += currentSaleTotal;
+        customers++;
+
+        // If there is change (amount paid is greater than the sale total)
+        if (amountPaid > currentSaleTotal) {
+            change = amountPaid - currentSaleTotal;
+            // Check if there is enough cash available to give change
+            if (change > cashRegister) {
+                printf("Change unavailable. Operation canceled.\n");
+                return 0;
+            }
+            // Update the cash register: deduct the change given
+            cashRegister -= change;
+            printf("Change to be returned: $%.2f\n\n", change);
+            calculateChange(change, &bill200, &bill100, &bill50, &bill10, &bill5, &coin1, &coin05);
+        } else {
+            printf("Exact payment. No change required!\n\n");
+        }
+
+        // Ask if the register should be closed
+        char option;
+        printf("\nDo you want to close the register? (Y/N): ");
+        scanf(" %c", &option);
+        if (option == 'Y' || option == 'y') {
+            closeRegister = 1;
+            closeCashRegister(customers, totalSalesAccumulated, cashRegister,
+                              bill200, bill100, bill50, bill10, bill5,
+                              coin1, coin05);
         }
     }
 
